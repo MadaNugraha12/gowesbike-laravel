@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form action="{{ route('products.update', $product->id) }}" method="POST">
+    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
 
         @csrf
         @method('PUT')
@@ -52,7 +52,6 @@
             >
         </div>
 
-        {{-- Kategori --}}
         <div class="form-group">
             <label for="category_id">Kategori</label>
 
@@ -95,6 +94,35 @@
                 rows="5"
                 placeholder="Deskripsi produk..."
             >{{ old('description', $product->description) }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Gambar Produk</label>
+
+            @if ($product->image)
+                <div style="margin-bottom: 12px;">
+                    <img
+                        src="{{ asset('storage/' . $product->image) }}"
+                        alt="{{ $product->name }}"
+                        style="width: 180px; height: 120px; object-fit: cover; border-radius: 8px;"
+                    >
+                </div>
+
+                <small style="display: block; margin-bottom: 8px; color: #777;">
+                    Gambar saat ini. Pilih gambar baru jika ingin menggantinya.
+                </small>
+            @endif
+
+            <input
+                type="file"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.webp"
+            >
+
+            <small>
+                Format: JPG, JPEG, PNG, WEBP. Maksimal 2 MB.
+            </small>
         </div>
 
         <div class="spec-grid">
@@ -235,6 +263,11 @@
     .form-group select:focus {
         outline: none;
         border-color: #111;
+    }
+
+    .form-group small {
+        color: #777;
+        font-size: 13px;
     }
 
     .spec-grid {

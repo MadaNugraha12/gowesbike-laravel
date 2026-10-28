@@ -34,6 +34,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-photo img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+
+    .placeholder-icon {
         font-size: 150px;
     }
 
@@ -124,6 +135,10 @@
             min-height: 350px;
         }
 
+        .product-photo img {
+            height: 350px;
+        }
+
         .product-info h1 {
             font-size: 36px;
         }
@@ -149,7 +164,22 @@
         <!-- PRODUCT IMAGE -->
 
         <div class="product-photo">
-            🚲
+
+            @if ($product['image'])
+
+                <img
+                    src="{{ asset('storage/' . $product['image']) }}"
+                    alt="{{ $product['name'] }}"
+                >
+
+            @else
+
+                <div class="placeholder-icon">
+                    🚲
+                </div>
+
+            @endif
+
         </div>
 
 

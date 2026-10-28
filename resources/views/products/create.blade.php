@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form action="{{ route('products.store') }}" method="POST">
+    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
 
         @csrf
 
@@ -93,6 +93,21 @@
                 rows="5"
                 placeholder="Deskripsi produk..."
             >{{ old('description') }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Gambar Produk</label>
+
+            <input
+                type="file"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.webp"
+            >
+
+            <small>
+                Format: JPG, JPEG, PNG, WEBP. Maksimal 2 MB.
+            </small>
         </div>
 
         <div class="spec-grid">
@@ -224,15 +239,22 @@
         background: white;
     }
 
-    .form-group textarea {
-        resize: vertical;
-    }
-
     .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
         outline: none;
         border-color: #111;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #777;
+        font-size: 13px;
     }
 
     .spec-grid {
