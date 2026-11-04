@@ -15,7 +15,6 @@ class ProductController extends Controller
 
         $products = Product::query();
 
-        // Search berdasarkan nama, brand, atau deskripsi
         if ($search) {
             $products->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
@@ -24,12 +23,10 @@ class ProductController extends Controller
             });
         }
 
-        // Filter berdasarkan kategori
         if ($categoryId) {
             $products->where('category_id', $categoryId);
         }
 
-        // Pagination 6 produk per halaman
         $products = $products->paginate(6)->withQueryString();
 
         $categories = \App\Models\Category::all();
@@ -93,7 +90,6 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-
         $categories = \App\Models\Category::all();
 
         return view('products.edit', compact('product', 'categories'));
