@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -13,23 +15,25 @@ class ProductController extends Controller
         $search = request('search');
         $categoryId = request('category_id');
 
-        $products = Product::query();
+        $productsQuery = Product::query();
 
         if ($search) {
-            $products->where(function ($query) use ($search) {
+            $productsQuery->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('brand', 'like', '%' . $search . '%')
-                      ->orWhere('description', 'like', '%' . $search . '%');
+                    ->orWhere('brand', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
         if ($categoryId) {
-            $products->where('category_id', $categoryId);
+            $productsQuery->where('category_id', $categoryId);
         }
 
-        $products = $products->paginate(6)->withQueryString();
+        /** @var LengthAwarePaginator $products */
+        $products = $productsQuery->paginate(6);
+        $products->withQueryString();
 
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
 
         return view('products', compact(
             'products',
@@ -41,7 +45,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
 
         return view('products.create', compact('categories'));
     }
@@ -87,15 +91,15 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         $product = Product::findOrFail($id);
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
 
         return view('products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $request->validate([
             'name' => 'required',
@@ -142,14 +146,14 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil diperbarui.');
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $product = Product::findOrFail($id);
 
         return view('product-detail', compact('product'));
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $product = Product::findOrFail($id);
 

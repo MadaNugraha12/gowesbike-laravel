@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('/products', [ProductController::class, 'store']);
         Route::put('/products/{id}', [ProductController::class, 'update']);
-        Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+        Route::delete('/products/{product}', [ProductController::class, 'destroy']);
     });
 
     // Category: bisa diakses admin dan user

@@ -7,6 +7,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,7 @@ class ProductController extends Controller
         return ProductResource::collection($products);
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $product = Product::with('category')->findOrFail($id);
 
@@ -50,7 +51,7 @@ class ProductController extends Controller
         return new ProductResource($product->load('category'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $product = Product::findOrFail($id);
 
@@ -82,18 +83,28 @@ class ProductController extends Controller
         return new ProductResource($product->load('category'));
     }
 
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($id);
+        $hasOrders = DB::table('order_details')
+            ->where('product_id', $product->id)
+            ->exists();
+
+        if ($hasOrders) {
+            $product->delete();
+
+            return response()->json([
+                'message' => 'Produk berhasil disembunyikan karena memiliki riwayat pesanan.'
+            ]);
+        }
 
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
 
-        $product->delete();
+        $product->forceDelete();
 
         return response()->json([
-            'message' => 'Produk berhasil dihapus.'
+            'message' => 'Produk berhasil dihapus permanen.'
         ]);
     }
 }
